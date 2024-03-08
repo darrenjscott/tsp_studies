@@ -1,20 +1,35 @@
-def brute_force(weight_list):
+def brute_force(weights):
     """
     Takes an order list of weight matrices and calculates, by brute force (checking all possibilities)
     the shortest path from any of the starting vertices and
-    :param weight_list:
+    :param weights: list of matrices describing the weights between nodes
     :return:
     """
-    num_nodes = len(weight_list)
-    path_route = []
-    path_weight = 0
-    def update_and_move(ind_a, ind_b, ind_mat):
-        nonlocal path_weight
-        path_weight += ind_mat[ind_a, ind_b]
-        path_route.append(ind_b)
-        if ind_mat == num_nodes:
-            return (path_weight, path_route)
-        else:
+
+    all_route_weights = []
+    all_route_sequences = []
+    start_mat = weights[0]
+
+    for ida, a in enumerate(start_mat):
+        for idb, b in enumerate(a):
+            for r in remaining_routes(idb, weights[1:]):
+                all_route_weights.append(b + r)
+                #all_route_sequences.append((ida, idb) + idr)
+
+    return all_route_weights #, all_route_sequences
+
+
+
+def remaining_routes(id, weight_list):
+    if weight_list == []:
+        yield 0
+    else:
+        current_weights = weight_list[0]
+        # Making sure to loop along only the correct row
+        for idb, b in enumerate(current_weights[id]):
+            for r in remaining_routes(idb,weight_list[1:]):
+                yield b + r
+
 
 
 
