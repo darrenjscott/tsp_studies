@@ -7,16 +7,20 @@ def brute_force(weights):
     """
 
     all_route_weights = []
+    route_weights_starting_a = []
     all_route_sequences = []
     start_mat = weights[0]
 
     for ida, a in enumerate(start_mat):
+        route_weights_a = []
         for idb, b in enumerate(a):
             for r in remaining_routes(idb, weights[1:]):
                 all_route_weights.append(b + r)
+                route_weights_a.append(b + r)
                 #all_route_sequences.append((ida, idb) + idr)
+        route_weights_starting_a.append(min(route_weights_a))
 
-    return all_route_weights #, all_route_sequences
+    return all_route_weights, route_weights_starting_a #, all_route_sequences
 
 
 
