@@ -10,3 +10,10 @@ def build_test_network(rows, columns, n_groups, round=2, seed=None):
     beta = 5
     rng = np.random.default_rng(seed)
     return [np.around(rng.beta(alpha, beta, size=(rows, columns)), round) for _ in range(n_groups - 1)]
+
+
+def build_cluster(n_points, round=2, seed=None):
+    cent = 0.0
+    std_dev = 1.0
+    rng = np.random.default_rng(seed)
+    return np.around(rng.normal(cent, std_dev, size=(n_points, 2)), round)
