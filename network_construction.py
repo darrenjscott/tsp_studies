@@ -12,6 +12,15 @@ def build_test_network(rows, columns, n_groups, round=2, seed=None):
     return [np.around(rng.beta(alpha, beta, size=(rows, columns)), round) for _ in range(n_groups - 1)]
 
 
+def cluster_nodes_randomly(coords, n_groups, seed=None):
+    rng = np.random.default_rng(seed)
+    split_pos = rng.integers(len(coords), size=n_groups-1)
+    # Shuffle the list of coordinates first, since otherwise this would just be cutting a
+    # pre-existing order
+    rng.shuffle(coords)
+    return np.split(coords,split_pos)
+
+
 def build_cluster(n_points, round=2, seed=None):
     cent = 0.0
     std_dev = 1.0

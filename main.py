@@ -18,6 +18,10 @@ print(bf_test)
 
 cities = netcon.build_cluster(15)
 print(cities)
+cities_split = netcon.cluster_nodes_randomly(cities,2)
+print(cities_split)
+print('non-split:' + str(len(cities)))
+print('split:' + str(len(cities_split)))
 
-pr.node_dist_plot(cities)
+pr.node_coord_plot(cities)
 
