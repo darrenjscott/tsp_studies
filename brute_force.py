@@ -1,7 +1,8 @@
 def brute_force(weights):
     """
     Takes an order list of weight matrices and calculates, by brute force (checking all possibilities)
-    the shortest path from any of the starting vertices and
+    the shortest path from any of the starting vertices to any vertex in the end cluster.
+    It ignores weights which are 0 (since this will represent the same node, for repeated consecutive nodes.
     :param weights: list of matrices describing the weights between nodes
     :return:
     """
@@ -14,6 +15,9 @@ def brute_force(weights):
     for ida, a in enumerate(start_mat):
         route_weights_a = []
         for idb, b in enumerate(a):
+            if b == 0:
+                continue
+
             for r in remaining_routes(idb, weights[1:]):
                 all_route_weights.append(b + r)
                 route_weights_a.append(b + r)
@@ -31,6 +35,9 @@ def remaining_routes(id, weight_list):
         current_weights = weight_list[0]
         # Making sure to loop along only the correct row
         for idb, b in enumerate(current_weights[id]):
+            if b == 0:
+                continue
+
             for r in remaining_routes(idb,weight_list[1:]):
                 yield b + r
 
