@@ -19,7 +19,6 @@ def gen_clustNet():
 
     # Calculate distances
     weights = calc_network_weights(clusters_coords)
-    print(weights)
     # Plot
     plot_clusters(clusters_coords)
 

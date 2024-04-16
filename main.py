@@ -36,8 +36,13 @@ def mainLoop():
 def get_ordered_weights(weights, route):
     ordered_weights = []
     for idC, char in enumerate(route[:-1]):
-        weight_key = char + route[idC+1]
-        ordered_weights.append(weights[weight_key])
+        weight_key_raw = char + route[idC+1]
+        weight_key_sorted = ''.join(sorted(weight_key_raw))
+
+        if weight_key_raw == weight_key_sorted:
+            ordered_weights.append(weights[weight_key_sorted])
+        else:
+            ordered_weights.append(np.transpose(weights[weight_key_sorted]))
 
     return ordered_weights
 
@@ -56,9 +61,15 @@ def route_test(weights, available_char):
 
     ordered_weights = get_ordered_weights(weights, route)
 
+    for w in ordered_weights:
+        print(w.shape)
+
     match algo_choice:
         case 1:
-            all_route_weights, route_weights_starting_a = brute_force(ordered_weights)
+            route_weight, route_code = brute_force(ordered_weights, return_all=True)
+            print(route_weight)
+            print("***********")
+            print(route_code)
 
 
 
