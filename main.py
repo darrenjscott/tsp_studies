@@ -1,6 +1,7 @@
 # Main file for tsp problem analysis
 from nearest_neighbours import nearest_neighbours as nn_algo
 from brute_force import brute_force
+from circle_algos import circle_algo
 import network_construction as netcon
 from string import ascii_uppercase
 import numpy as np
@@ -65,6 +66,7 @@ def route_test(weights, available_char):
     print("Currently available algorithms:")
     print("\t 1. Brute force")
     print("\t 2. Nearest neighbours")
+    print("\t 3. Circle algorithm")
     algo_choice, route = input('Enter your selection: ').split()
     algo_choice = int(algo_choice)
     route = route.upper()
@@ -72,8 +74,11 @@ def route_test(weights, available_char):
     # Gets a list of the relevant weight arrays
     ordered_weights = get_ordered_weights(weights, route)
 
+    print(" Choices per cluster:")
     for w in ordered_weights:
         print(w.shape)
+
+    print("*************")
 
     match algo_choice:
         case 1:
@@ -88,7 +93,15 @@ def route_test(weights, available_char):
             print(f"Route weight: {route_weight}")
             print(f"Route path: {route_path}")
 
+        case 3:
+            # Need weights between start and end points for this algorithm
+            start_end_nodes = route[0] + route[-1]
+            start_end_weights = get_ordered_weights(weights, start_end_nodes)
 
+            route_weight, route_path = circle_algo(ordered_weights, start_end_weights[0])
+            print("****** Circle ******")
+            print(f"Route weight: {route_weight}")
+            print(f"Route path: {route_path}")
 
 
 if __name__ == '__main__':
