@@ -9,8 +9,8 @@ def gen_clustNet():
     n_nodes = int(input("How many total nodes: "))
     n_clust = int(input("How many clusters: "))
 
-    while n_clust > n_nodes:
-        print("Can't make more clusters than there are nodes.")
+    while n_nodes < 2 * n_clust:
+        print("For testing, allow for at least two nodes per cluster")
         print("Try again..")
         n_nodes = int(input("How many total nodes: "))
         n_clust = int(input("How many clusters: "))
@@ -44,18 +44,31 @@ def build_random_weight(n_starts, n_ends, round=2, seed=None):
 
 
 def cluster_nodes_randomly(coords, n_groups, seed=None):
+    def consecutive(array):
+        for idx, i in enumerate(array[:-1]):
+            if i == array[idx+1] + 1:
+                return True
+
+        return False
+
+
+
     rng = np.random.default_rng(seed)
-    # Want to avoid splits which generate empty lists - avoid consecutive numbers
+    # Want to avoid splits which generate empty lists or lists of length 1
     # This needs to be rewritten - potential to end up in infinite loop
     # if the number of groups requested is larger than the number of nodes - try to avoid at input, but rewrite anyway.
-    split_pos = rng.integers(1, len(coords), size=n_groups-1)
-    while len(np.unique(split_pos)) != n_groups-1:
-        split_pos = rng.integers(len(coords), size=n_groups - 1)
+    split_pos = np.sort(rng.integers(1, len(coords), size=n_groups-1))
+    fail_unique = len(np.unique(split_pos)) != n_groups-1
+    fail_len = consecutive(split_pos)
+    while fail_unique or fail_len:
+        split_pos = np.sort(rng.integers(len(coords), size=n_groups - 1))
+        fail_unique = len(np.unique(split_pos)) != n_groups-1
+        fail_len = consecutive(split_pos)
 
     # Shuffle the list of coordinates first, since otherwise this would just be cutting a
     # pre-existing order (not so relevant for randomly generated list, but for other inputs perhaps)
     rng.shuffle(coords)
-    return np.split(coords, np.sort(split_pos))
+    return np.split(coords, split_pos)
 
 
 def node_gen(n_points, round=2, seed=None):
