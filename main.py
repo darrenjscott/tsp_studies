@@ -82,12 +82,14 @@ def route_test(weights, available_char):
 
     match algo_choice:
         case 1:
+            # Should be fixed to return weights of individual paths between nodes for a given route
             route_weights, route_paths = brute_force(ordered_weights)
             print("****** Brute Force ******")
             print(f"Route weights: {route_weights}")
             print(f"Route paths: {route_paths}")
 
         case 2:
+            # Should be fixed to return weights of individual paths between nodes for a given route
             route_weight, route_path = nn_algo(ordered_weights)
             print("****** Nearest Neighbour ******")
             print(f"Route weight: {route_weight}")
@@ -99,8 +101,10 @@ def route_test(weights, available_char):
             start_end_weights = get_ordered_weights(weights, start_end_nodes)
 
             route_weight, route_path = circle_algo(ordered_weights, start_end_weights[0])
+            tot_weight = np.sum(np.array(route_weight))
             print("****** Circle ******")
-            print(f"Route weight: {route_weight}")
+            print(f"Total weight: {tot_weight}")
+            print(f"Route weights: {route_weight}")
             print(f"Route path: {route_path}")
 
 
