@@ -55,26 +55,28 @@ def cluster_nodes_randomly(coords, n_groups, seed=None):
     # Checks sorted np.array of ints for consecutive values
     def consecutive(array):
         for idx, i in enumerate(array[:-1]):
-            if i == array[idx+1] + 1:
+            if i == array[idx+1] - 1:
                 return True
 
         return False
 
     rng = np.random.default_rng(seed)
     # Want to avoid splits which generate clusters of size 0 or 1.
-    # This needs to be rewritten - potential to end up in infinite loop
+    # This following should be rewritten - potential to end up in infinite loop
     # if the number of groups requested is larger than the number of nodes - try to avoid at input, but rewrite anyway.
 
-    # numpy array of positions to split coordinate list into different clusters
-    split_pos = np.sort(rng.integers(1, len(coords), size=n_groups-1))
 
+    # The loop will generate positions to split the coordinates at to build clusters
     # Splits no use if:
     #       two split positons are identical (creates and empty cluster)
     #       two split positons are one unit apart (creates clusters of size 1)
-    fail_unique = len(np.unique(split_pos)) != n_groups-1
-    fail_len = consecutive(split_pos)
+    fail_unique = True
+    fail_len = True
+    split_pos = np.array([])
     while fail_unique or fail_len:
-        split_pos = np.sort(rng.integers(len(coords), size=n_groups - 1))
+        # Start at 2 and end one below length (which is the upper non-inclusive range)
+        # to avoid generating clusters of one at either end
+        split_pos = np.sort(rng.integers(2, len(coords)-1, size=n_groups - 1))
         fail_unique = len(np.unique(split_pos)) != n_groups-1
         fail_len = consecutive(split_pos)
 

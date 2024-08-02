@@ -5,7 +5,7 @@ from circle_algos import circle_algo
 import network_construction as netcon
 from string import ascii_uppercase
 import numpy as np
-import io
+import clust_io
 import matplotlib.pyplot as plt
 from plotting_routines import plot_clusters
 
@@ -18,8 +18,10 @@ seed = 1733
 def mainLoop():
     print("'Travelling salesman'-like algorithms")
     available_char = ''
+    weights = dict()
+    cluster_coords = dict()
     while True:
-        userCommand = io.print_options_main()
+        userCommand = clust_io.print_options_main()
 
         match userCommand:
             case 1:
@@ -32,6 +34,8 @@ def mainLoop():
                 #       value: 2d numpy array of weights between all possible points
                 cluster_coords, weights = netcon.gen_clustNet()
                 available_char = ''.join(list(cluster_coords.keys()))
+
+                clust_io.print_clusters_info(cluster_coords)
 
             case 2:
                 route_test(weights, available_char)
@@ -57,14 +61,16 @@ def get_ordered_weights(weights, route):
 
 
 def route_test(weights, available_char):
-    algo_choice, route = io.print_options_route_test(available_char)
+    algo_choice, route = clust_io.print_options_route_test(available_char)
 
     # Gets a list() of the relevant weight arrays, in the order needed
     ordered_weights = get_ordered_weights(weights, route)
 
     print(" Choices per cluster:")
-    for w in ordered_weights:
-        print(w.shape)
+    for idx, w in enumerate(ordered_weights):
+        from_clust_num = w.shape[0]
+        to_clust_num = w.shape[1]
+        print(f"{route[idx]} to {route[idx+1]}: {from_clust_num} -> {to_clust_num}")
 
     print("*************")
 

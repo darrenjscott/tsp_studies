@@ -28,3 +28,12 @@ def print_options_route_test(available_clusts):
     route = route.upper()
 
     return algo_choice, route
+
+
+def print_clusters_info(cluster_coords):
+    print("")
+    print("** Number of nodes per cluster **")
+    for clust_name, coords in cluster_coords.items():
+        print(f"Cluster {clust_name}: {len(coords)}")
+
+    print("")
