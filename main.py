@@ -5,6 +5,7 @@ from circle_algos import circle_algo
 import network_construction as netcon
 from string import ascii_uppercase
 import numpy as np
+import io
 import matplotlib.pyplot as plt
 from plotting_routines import plot_clusters
 
@@ -15,24 +16,22 @@ seed = 1733
 
 # Top level entry
 def mainLoop():
-    print("Travelling salesman type algorithms")
+    print("'Travelling salesman'-like algorithms")
     available_char = ''
     while True:
-        print("")
-        print("Please pick an option:")
-        print("\t 1 : Generate random network of clustered nodes")
-        print("\t 2 : Route finding (generate/provide a network first)")
-        print("\t 10 : Plot nodes")
-
-        print("\t -1: Quit")
-        userCommand = int(input("Please select an option: "))
+        userCommand = io.print_options_main()
 
         match userCommand:
             case 1:
                 # Generates a network of nodes, clustered into groups
-                # weights
+                # cluster_coords is a dictionary:
+                #       key:   cluster name (uppercase ascii for now 'A', 'B', etc)
+                #       value: numpy array of 2D coords part of that cluster
+                # weights is a dictionary of all possible weights between points, listed by cluster:
+                #       key:   cluster pair (e.g. 'AB', 'BB', etc)
+                #       value: 2d numpy array of weights between all possible points
                 cluster_coords, weights = netcon.gen_clustNet()
-                available_char = ascii_uppercase[:len(cluster_coords)]
+                available_char = ''.join(list(cluster_coords.keys()))
 
             case 2:
                 route_test(weights, available_char)
@@ -58,20 +57,9 @@ def get_ordered_weights(weights, route):
 
 
 def route_test(weights, available_char):
-    print("Pick an algorithm, followed by the sequence you want to follow.")
-    print("For example, enter:")
-    print("1 ADCBD")
-    print("to select algorithm 1 to follow the route A -> D -> C -> B -> D.")
-    print("Currently available characters:" + available_char)
-    print("Currently available algorithms:")
-    print("\t 1. Brute force")
-    print("\t 2. Nearest neighbours")
-    print("\t 3. Circle algorithm")
-    algo_choice, route = input('Enter your selection: ').split()
-    algo_choice = int(algo_choice)
-    route = route.upper()
+    algo_choice, route = io.print_options_route_test(available_char)
 
-    # Gets a list of the relevant weight arrays
+    # Gets a list() of the relevant weight arrays, in the order needed
     ordered_weights = get_ordered_weights(weights, route)
 
     print(" Choices per cluster:")
