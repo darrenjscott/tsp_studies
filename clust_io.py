@@ -37,3 +37,13 @@ def print_clusters_info(cluster_coords):
         print(f"Cluster {clust_name}: {len(coords)}")
 
     print("")
+
+
+def print_cluster_seq_info(ordered_weights, route):
+    print(" Choices per cluster:")
+    for idx, w in enumerate(ordered_weights):
+        from_clust_num = w.shape[0]
+        to_clust_num = w.shape[1]
+        print(f"{route[idx]} to {route[idx+1]}: {from_clust_num} -> {to_clust_num}")
+
+    print("*************")

@@ -14,6 +14,7 @@ n_groups = 6
 rounding = 2
 seed = 1733
 
+
 # Top level entry
 def mainLoop():
     print("'Travelling salesman'-like algorithms")
@@ -48,6 +49,9 @@ def mainLoop():
 
 def get_ordered_weights(weights, route):
     ordered_weights = []
+
+    # Since we only construct weight matrices once for each pair (i.e. A->B is just the transpose of B->A)
+    # we check if we need to order the two characters and subsequentially transpose the weight matrix
     for idC, char in enumerate(route[:-1]):
         weight_key_raw = char + route[idC+1]
         weight_key_sorted = ''.join(sorted(weight_key_raw))
@@ -61,35 +65,36 @@ def get_ordered_weights(weights, route):
 
 
 def route_test(weights, available_char):
+    # route is a string with the sequence of clusters to visit
     algo_choice, route = clust_io.print_options_route_test(available_char)
 
     # Gets a list() of the relevant weight arrays, in the order needed
     ordered_weights = get_ordered_weights(weights, route)
 
-    print(" Choices per cluster:")
-    for idx, w in enumerate(ordered_weights):
-        from_clust_num = w.shape[0]
-        to_clust_num = w.shape[1]
-        print(f"{route[idx]} to {route[idx+1]}: {from_clust_num} -> {to_clust_num}")
-
-    print("*************")
+    # Print info about cluster sequence
+    clust_io.print_cluster_seq_info(ordered_weights, route)
 
     match algo_choice:
-        case 1:
+        case 1: # Brute force
             # Should be fixed to return weights of individual paths between nodes for a given route
             route_weights, route_paths = brute_force(ordered_weights)
             print("****** Brute Force ******")
             print(f"Route weights: {route_weights}")
             print(f"Route paths: {route_paths}")
+            print("*"*20)
+            print(f"Smallest weight: {np.min(route_weights)}")
+            print(f"Path: {route_paths[route_weights.index(np.min(route_weights))]}")
+            print("*" * 20)
 
-        case 2:
+        case 2: # Nearest neighbour
+            # TO UPDATE
             # Should be fixed to return weights of individual paths between nodes for a given route
             route_weight, route_path = nn_algo(ordered_weights)
             print("****** Nearest Neighbour ******")
             print(f"Route weight: {route_weight}")
             print(f"Route path: {route_path}")
 
-        case 3:
+        case 3: # Circle - to implement
             # Need weights between start and end points for this algorithm
             start_end_nodes = route[0] + route[-1]
             start_end_weights = get_ordered_weights(weights, start_end_nodes)
