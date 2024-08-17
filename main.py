@@ -107,5 +107,15 @@ def route_test(weights, available_char):
             print(f"Route path: {route_path}")
 
 
+class Route:
+    def __init__(self, clusters: list, path: list, weights: list):
+        self.clusters = clusters
+        self.path = path
+        self.weights = weights
+
+    def total_weight(self):
+        return np.sum(self.weights)
+
+
 if __name__ == '__main__':
     mainLoop()
