@@ -11,7 +11,7 @@ def circle_algo(weights, start_end_weights):
         end_id = np.argmin(start_end_weights[start_id])
 
         # Perform NN from start node to 2nd last node
-        path, path_weights = constrained_nn(start_id, end_id, weights)
+        paths, path_weights = constrained_nn(start_id, end_id, weights)
 
         # recursively search nodes either side (except start and end) of highest weight segment
 
@@ -21,7 +21,7 @@ def circle_algo(weights, start_end_weights):
     #route_weight = tuple()
     #route_path = []
     route_weight = path_weights
-    route_path = path
+    route_path = paths
     return route_weight, route_path
     #print("")
     #print("path (for b0)")

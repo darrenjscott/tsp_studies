@@ -20,29 +20,34 @@ def constrained_nn(start_id, end_id, weights):
     path = []
     path_weights = []
 
-    for node_id, weight in enumerate(weights[0][start_id]):
+    for node, weight in enumerate(weights[0][start_id]):
         # Lowest weight node from next cluster
-        start_weight = np.min(weight)
-        start_id = np.argmin(weight)
+        next_weight = np.min(weight)
+        next_id = np.argmin(weight)
 
         # Recursively search through from 2nd to 2nd last node
-        path_weight_a, path_a = recursive_nearest(start_id, start_weight, weights[1:-1])
+        if weights[1:-1] != []:
+            path_weight_a, path_a = recursive_nearest(next_id, next_weight, weights[1:-1])
+        else:
+            path_weight_a = [next_id]
+            path_a = [next_id]
 
         end_weight = weights[-1][path_a[-1]][end_id]
 
-        path_weights.append(path_weight_a + end_weight)
-        path.append((node_id, start_id) + path_a + (end_id,))
+        path_weights.append([path_weight_a + end_weight])
+        path.append([start_id, next_id] + path_a + [end_id])
 
     return path, path_weights
 
 
 
 def recursive_nearest(idx, current_weight, weight_list):
+    # If no more clusters to visit
     if not weight_list:
-        return current_weight, tuple()
+        return current_weight, []
     else:
         next_weight_matrix = weight_list[0]
-        smallest_weight = min(next_weight_matrix[idx])
+        smallest_weight = np.min(next_weight_matrix[idx])
         nearest_idx = np.argmin(next_weight_matrix[idx])
         new_weight, path_idx = recursive_nearest(nearest_idx, current_weight + smallest_weight, weight_list[1:])
-        return new_weight, (nearest_idx,) + path_idx
+        return new_weight, [nearest_idx] + [path_idx]
