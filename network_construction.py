@@ -31,6 +31,18 @@ def gen_clustNet():
     #       value: nx2 numpy array of coords (n can be different for different clusters)
     clusters_coords = cluster_nodes_randomly(node_coords, n_clust)
 
+    # This can be used to set a minimum number per cluster - sometimes two is too few
+    CUSTOM_MIN_PER_CLUSTER = 2
+    def tooShort(x: dict):
+        for thing in x.values():
+            if len(thing) < CUSTOM_MIN_PER_CLUSTER:
+                return True
+
+        return False
+
+    while tooShort(clusters_coords):
+        clusters_coords = cluster_nodes_randomly(node_coords, n_clust)
+
     # Calculate distances
     # This is a dictionary:
     #       key:   Cluster pair (e.g. 'AD' or 'BB'). Keys always alphabetical - no 'DA' as this is identical to 'AD'

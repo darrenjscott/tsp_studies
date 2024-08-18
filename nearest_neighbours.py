@@ -16,6 +16,27 @@ def nearest_neighbours(weights):
     return route_weights, route_paths
 
 
+def constrained_nn(start_id, end_id, weights):
+    path = []
+    path_weights = []
+
+    for node_id, weight in enumerate(weights[0][start_id]):
+        # Lowest weight node from next cluster
+        start_weight = np.min(weight)
+        start_id = np.argmin(weight)
+
+        # Recursively search through from 2nd to 2nd last node
+        path_weight_a, path_a = recursive_nearest(start_id, start_weight, weights[1:-1])
+
+        end_weight = weights[-1][path_a[-1]][end_id]
+
+        path_weights.append(path_weight_a + end_weight)
+        path.append((node_id, start_id) + path_a + (end_id,))
+
+    return path, path_weights
+
+
+
 def recursive_nearest(idx, current_weight, weight_list):
     if not weight_list:
         return current_weight, tuple()

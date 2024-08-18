@@ -1,4 +1,6 @@
 # Main file for tsp problem analysis
+from keyring.backends.libsecret import available
+
 from nearest_neighbours import nearest_neighbours as nn_algo
 from brute_force import brute_force
 from circle_algos import circle_algo
@@ -8,6 +10,8 @@ import numpy as np
 import clust_io
 import matplotlib.pyplot as plt
 from plotting_routines import plot_clusters
+
+import pickle
 
 n_nodes = 4
 n_groups = 6
@@ -25,7 +29,15 @@ def mainLoop():
         userCommand = clust_io.print_options_main()
 
         match userCommand:
-            case 1:
+            case 0: # DEBUG MODE
+                with open('validation_weights.pkl', 'rb') as fp:
+                    weights = pickle.load(fp)
+                    available_char = ''.join(sorted(set(''.join(weights.keys()))))
+                    print('Using validation weights')
+                    print(weights)
+                    print("Available chars:", available_char)
+
+            case 1: # USE RANDOM NETWORK
                 # Generates a network of nodes, clustered into groups
                 # cluster_coords is a dictionary:
                 #       key:   cluster name (uppercase ascii for now 'A', 'B', etc)
@@ -34,16 +46,30 @@ def mainLoop():
                 #       key:   cluster pair (e.g. 'AB', 'BB', etc)
                 #       value: 2d numpy array of weights between all possible points
                 cluster_coords, weights = netcon.gen_clustNet()
+
                 available_char = ''.join(list(cluster_coords.keys()))
 
                 clust_io.print_clusters_info(cluster_coords)
 
-            case 2:
+            case 2: # Try some routefinding algorithms
                 route_test(weights, available_char)
 
-            case 10:
+            case 10: # Node info
+                print("** Nodes per cluster **")
+                for clust_name, clust_coords in cluster_coords.items():
+                    print(f"{clust_name}: {len(clust_coords)}")
+
+                # Can add prints for other info - weights is too much
+                print(weights)
+
+            case 11: # Plot nodes
                 plot_clusters(cluster_coords)
-            case -1:
+#            case 12:
+#                with open('validation_weights.pkl', 'wb') as fp:
+#                    pickle.dump(weights, fp)
+#                    print('dictionary saved successfully to file')
+
+            case -1: # Quit
                 return 0
 
 
@@ -94,7 +120,7 @@ def route_test(weights, available_char):
             print(f"Route weight: {route_weight}")
             print(f"Route path: {route_path}")
 
-        case 3: # Circle - to implement
+        case 3: # Circle
             # Need weights between start and end points for this algorithm
             start_end_nodes = route[0] + route[-1]
             start_end_weights = get_ordered_weights(weights, start_end_nodes)
@@ -107,6 +133,7 @@ def route_test(weights, available_char):
             print(f"Route path: {route_path}")
 
 
+# This is not used yet
 class Route:
     def __init__(self, clusters: list, path: list, weights: list):
         self.clusters = clusters

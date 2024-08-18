@@ -4,9 +4,11 @@
 def print_options_main():
     print("")
     print("Please pick an option:")
+    print("\t 0 : DEBUG MODE")
     print("\t 1 : Generate random network of clustered nodes")
     print("\t 2 : Route finding (generate/provide a network first)")
-    print("\t 10 : Plot nodes")
+    print("\t 10: Print network information")
+    print("\t 11: Plot nodes")
 
     print("\t -1: Quit")
     userCommand = int(input("Please select an option: "))
