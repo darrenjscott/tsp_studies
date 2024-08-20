@@ -17,37 +17,41 @@ def nearest_neighbours(weights):
 
 
 def constrained_nn(start_id, end_id, weights):
-    path = []
+    path = [start_id]
     path_weights = []
 
-    for node, weight in enumerate(weights[0][start_id]):
-        # Lowest weight node from next cluster
-        next_weight = np.min(weight)
-        next_id = np.argmin(weight)
+    # Lowest weight node from next cluster
+    next_weight = np.min(weights[0][start_id])
+    next_id = np.argmin(weights[0][start_id])
 
-        # Recursively search through from 2nd to 2nd last node
-        if weights[1:-1] != []:
-            path_weight_a, path_a = recursive_nearest(next_id, next_weight, weights[1:-1])
-        else:
-            path_weight_a = [next_id]
-            path_a = [next_id]
+    path_weights.append(next_weight)
+    path.append(next_id)
 
-        end_weight = weights[-1][path_a[-1]][end_id]
+    # Recursively search through from 2nd to 2nd last node
+    if weights[1:-1] != []:
+        path, path_weights = recursive_nearest(path, path_weights, weights[1:-1])
 
-        path_weights.append([path_weight_a + end_weight])
-        path.append([start_id, next_id] + path_a + [end_id])
+    end_weight = weights[-1][path[-1]][end_id]
+
+    path_weights.append(end_weight)
+    path.append(end_id)
 
     return path, path_weights
 
 
 
-def recursive_nearest(idx, current_weight, weight_list):
+def recursive_nearest(path, path_weights, weight_list):
     # If no more clusters to visit
     if not weight_list:
-        return current_weight, []
+        return path, path_weights
     else:
+        idx_last = path[-1]
         next_weight_matrix = weight_list[0]
-        smallest_weight = np.min(next_weight_matrix[idx])
-        nearest_idx = np.argmin(next_weight_matrix[idx])
-        new_weight, path_idx = recursive_nearest(nearest_idx, current_weight + smallest_weight, weight_list[1:])
-        return new_weight, [nearest_idx] + [path_idx]
+        smallest_weight = np.min(next_weight_matrix[idx_last])
+        smallest_weight_idx = np.argmin(next_weight_matrix[idx_last])
+
+        path_weights.append(smallest_weight)
+        path.append(smallest_weight_idx)
+        path, path_weights = recursive_nearest(path, path_weights, weight_list[1:])
+
+        return path, path_weights

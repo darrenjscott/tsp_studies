@@ -23,7 +23,7 @@ def print_options_route_test(available_clusts):
     print("Currently available characters:" + available_clusts)
     print("Currently available algorithms:")
     print("\t 1. Brute force")
-    print("\t 2. Nearest neighbours")
+    print("\t 2. Nearest neighbours - PROBABLY CURRENTLY BROKEN. UPGRADED FOR CIRCLE ALGO")
     print("\t 3. Circle algorithm")
     algo_choice, route = input('Enter your selection: ').split()
     algo_choice = int(algo_choice)

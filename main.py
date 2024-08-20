@@ -34,7 +34,10 @@ def mainLoop():
                     weights = pickle.load(fp)
                     available_char = ''.join(sorted(set(''.join(weights.keys()))))
                     print('Using validation weights')
-                    print(weights)
+                    for key, vals in weights.items():
+                        print(f"Distance: {key}")
+                        print(vals)
+
                     print("Available chars:", available_char)
 
             case 1: # USE RANDOM NETWORK
@@ -125,12 +128,15 @@ def route_test(weights, available_char):
             start_end_nodes = route[0] + route[-1]
             start_end_weights = get_ordered_weights(weights, start_end_nodes)
 
-            route_weight, route_path = circle_algo(ordered_weights, start_end_weights[0])
-            tot_weight = np.sum(np.array(route_weight))
+            route_weights, route_paths, displacement_weights = circle_algo(ordered_weights, start_end_weights[0])
             print("****** Circle ******")
-            print(f"Total weight: {tot_weight}")
-            print(f"Route weights: {route_weight}")
-            print(f"Route path: {route_path}")
+            for idx, specific_path in enumerate(route_paths):
+                wgts = route_weights[idx]
+                wgts_first_last = displacement_weights[idx]
+                print(f"Route: {specific_path}")
+                print(f"Route weights: {wgts}")
+                print(f"Total weight: {np.sum(wgts)}")
+                print(f"Distance between end node and starting node: {wgts_first_last}")
 
 
 # This is not used yet
