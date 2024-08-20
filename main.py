@@ -10,6 +10,7 @@ import numpy as np
 import clust_io
 import matplotlib.pyplot as plt
 from plotting_routines import plot_clusters
+from route_classes import Route
 
 import pickle
 
@@ -128,26 +129,14 @@ def route_test(weights, available_char):
             start_end_nodes = route[0] + route[-1]
             start_end_weights = get_ordered_weights(weights, start_end_nodes)
 
-            route_weights, route_paths, displacement_weights = circle_algo(ordered_weights, start_end_weights[0])
+            #route_weights, route_paths, displacement_weights = circle_algo(ordered_weights, start_end_weights[0])
+            list_of_routes = circle_algo(ordered_weights, start_end_weights[0], route)
             print("****** Circle ******")
-            for idx, specific_path in enumerate(route_paths):
-                wgts = route_weights[idx]
-                wgts_first_last = displacement_weights[idx]
-                print(f"Route: {specific_path}")
-                print(f"Route weights: {wgts}")
-                print(f"Total weight: {np.sum(wgts)}")
-                print(f"Distance between end node and starting node: {wgts_first_last}")
-
-
-# This is not used yet
-class Route:
-    def __init__(self, clusters: list, path: list, weights: list):
-        self.clusters = clusters
-        self.path = path
-        self.weights = weights
-
-    def total_weight(self):
-        return np.sum(self.weights)
+            for rte in list_of_routes:
+                print(f"Route: {rte.path}")
+                print(f"Route weights: {rte.weights}")
+                print(f"Total weight: {rte.total_weight()}")
+                print(f"Distance between end node and starting node: {rte.start_end_weight}")
 
 
 if __name__ == '__main__':
