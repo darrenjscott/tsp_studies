@@ -20,6 +20,16 @@ class Route:
     def total_weight(self):
         return np.sum(self.weights)
 
+    def cluster_nodes_visited(self):
+        if len(self.path) != len(self.cluster_sequence):
+            return "FAILED" # should upgrade this to proper error handling
+
+        visit_dict = {cluster: [] for cluster in self.cluster_sequence}
+        for step, cluster in enumerate(self.cluster_sequence):
+            visit_dict[cluster].append(self.path[step])
+
+        return visit_dict
+
 
 # Class to implement for storing individual routes and sorting, ordering them, whatever
 class Route_collection(Route):

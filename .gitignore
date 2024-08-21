@@ -5,3 +5,4 @@ docs
 fortran_files
 *.layout
 *.cbp
+venv

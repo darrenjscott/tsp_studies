@@ -96,27 +96,22 @@ def back_iteration(weights, route):
         end_node = route.path[matrix_idx+1]
         old_start_node_idx = route.path[matrix_idx]
 
+        forbidden_nodes_dict = route.cluster_nodes_visited()
+        forbidden_nodes = forbidden_nodes_dict[route.cluster_sequence[matrix_idx]]
+
         improvement_made = False
         for new_start_node_idx, weight in enumerate(weight_matrix.T[end_node]):
             # If the weight is larger, don't bother testing it (there are scenarios where this could
             # lead to overall improvements, but for now we want to reduce the length of the last leg)
-            if weight >= route.weights[matrix_idx]:
+            if (weight >= route.weights[matrix_idx]) or (new_start_node_idx in forbidden_nodes):
                 continue
 
             if (overall_lower_weight(route, weights, matrix_idx, old_start_node_idx, new_start_node_idx)):
                 improvement_made = True
-                print(f"IMPROVEMENT MADE:")
-                print(f"Before path: {route.path}")
-                print(f"Before weights: {route.weights}")
-                print(f"Before total weight: {route.total_weight()}")
-                print("")
                 route.path[matrix_idx] = new_start_node_idx
                 route.weights[matrix_idx] = weight
                 route.weights[matrix_idx - 1] = weights[matrix_idx - 1][route.path[matrix_idx - 1]][new_start_node_idx]
-                print(f"After path: {route.path}")
-                print(f"After weights: {route.weights}")
-                print(f"After total weight: {route.total_weight()}")
-                print("*"*10)
+
         # If previous node not improved upon then others will not change
         # They were already constructed to be NN
         if not improvement_made:

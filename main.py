@@ -1,5 +1,5 @@
 # Main file for tsp problem analysis
-from keyring.backends.libsecret import available
+#from keyring.backends.libsecret import available
 
 from nearest_neighbours import nearest_neighbours as nn_algo
 from brute_force import brute_force
@@ -9,10 +9,12 @@ from string import ascii_uppercase
 import numpy as np
 import clust_io
 import matplotlib.pyplot as plt
-from plotting_routines import plot_clusters
+from plotting_routines import plot_clusters, plot_routes
 from route_classes import Route
-
+import time
 import pickle
+
+np.set_printoptions(legacy='1.25')
 
 n_nodes = 4
 n_groups = 6
@@ -56,7 +58,7 @@ def mainLoop():
                 clust_io.print_clusters_info(cluster_coords)
 
             case 2: # Try some routefinding algorithms
-                route_test(weights, available_char)
+                route_test(weights, available_char, cluster_coords)
 
             case 10: # Node info
                 print("** Nodes per cluster **")
@@ -94,15 +96,15 @@ def get_ordered_weights(weights, route):
     return ordered_weights
 
 
-def route_test(weights, available_char):
+def route_test(weights, available_char, cluster_coords):
     # route is a string with the sequence of clusters to visit
-    algo_choice, route = clust_io.print_options_route_test(available_char)
+    algo_choice, cluster_sequence = clust_io.print_options_route_test(available_char)
 
     # Gets a list() of the relevant weight arrays, in the order needed
-    ordered_weights = get_ordered_weights(weights, route)
+    ordered_weights = get_ordered_weights(weights, cluster_sequence)
 
     # Print info about cluster sequence
-    clust_io.print_cluster_seq_info(ordered_weights, route)
+    clust_io.print_cluster_seq_info(ordered_weights, cluster_sequence)
 
     match algo_choice:
         case 1: # Brute force
@@ -116,7 +118,7 @@ def route_test(weights, available_char):
             print(f"Path: {route_paths[route_weights.index(np.min(route_weights))]}")
             print("*" * 20)
 
-        case 2: # Nearest neighbour
+        case 2: # Nearest neighbour - will be broken for now
             # TO UPDATE
             # Should be fixed to return weights of individual paths between nodes for a given route
             route_weight, route_path = nn_algo(ordered_weights)
@@ -126,17 +128,26 @@ def route_test(weights, available_char):
 
         case 3: # Circle
             # Need weights between start and end points for this algorithm
-            start_end_nodes = route[0] + route[-1]
+            st = time.process_time()
+            start_end_nodes = cluster_sequence[0] + cluster_sequence[-1]
             start_end_weights = get_ordered_weights(weights, start_end_nodes)
 
             #route_weights, route_paths, displacement_weights = circle_algo(ordered_weights, start_end_weights[0])
-            list_of_routes = circle_algo(ordered_weights, start_end_weights[0], route)
+            list_of_routes = circle_algo(ordered_weights, start_end_weights[0], cluster_sequence)
+            et = time.process_time()
             print("****** Circle ******")
-            for rte in list_of_routes:
-                print(f"Route: {rte.path}")
-                print(f"Route weights: {rte.weights}")
-                print(f"Total weight: {rte.total_weight()}")
-                print(f"Distance between end node and starting node: {rte.start_end_weight}")
+            for route in list_of_routes:
+                print(f"Route: {route.path}")
+                print(f"Route weights: {route.weights}")
+                print(f"Total weight: {route.total_weight()}")
+                print(f"Distance between end node and starting node: {route.start_end_weight}")
+
+            cpu_time = et - st
+            print(f"CPU execution time: {cpu_time} seconds")
+
+            userCommand = input("Plot routes to screen [y/n]?: ")
+            if userCommand.upper() == "Y":
+                plot_routes(list_of_routes, cluster_coords)
 
 
 if __name__ == '__main__':

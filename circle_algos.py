@@ -21,11 +21,10 @@ def circle_algo(weights, start_end_weights, cluster_sequence):
 
         # Perform NN from start node to 2nd last node
         constrained_nn(start_id, end_id, weights, route)
-
+        print(f"Outside constrainedNN: {route.path}")
         # recursively search nodes either side (except start and end) of highest weight segment
         # Recall constraints related to previously visited nodes
         back_iteration(weights, route)
-
 
         list_of_routes.append(route)
 

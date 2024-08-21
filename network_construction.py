@@ -32,15 +32,16 @@ def gen_clustNet():
     clusters_coords = cluster_nodes_randomly(node_coords, n_clust)
 
     # This can be used to set a minimum number per cluster - sometimes two is too few
-    CUSTOM_MIN_PER_CLUSTER = 2
-    def tooShort(x: dict):
+    MIN_PER_CLUSTER = 2
+    #MAX_PER_CLUSTER = 15
+    def wrongSize(x: dict):
         for thing in x.values():
-            if len(thing) < CUSTOM_MIN_PER_CLUSTER:
+            if (len(thing) < MIN_PER_CLUSTER): #or (len(thing) > MAX_PER_CLUSTER):
                 return True
 
         return False
 
-    while tooShort(clusters_coords):
+    while wrongSize(clusters_coords):
         clusters_coords = cluster_nodes_randomly(node_coords, n_clust)
 
     # Calculate distances
