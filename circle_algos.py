@@ -1,10 +1,8 @@
 import numpy as np
-from nearest_neighbours import constrained_nn
+from nearest_neighbours import constrained_nn, back_iteration
 from route_classes import Route
 
-# Still to fix
-# Avoid visiting nodes already visited within the same group
-# As above but for start end nodes if they are in the same group
+# Still to fix:
 # Implement recursive correction (including visited nodes)
 
 def circle_algo(weights, start_end_weights, cluster_sequence):
@@ -25,7 +23,9 @@ def circle_algo(weights, start_end_weights, cluster_sequence):
         constrained_nn(start_id, end_id, weights, route)
 
         # recursively search nodes either side (except start and end) of highest weight segment
-        # TO IMPLEMENT
+        # Recall constraints related to previously visited nodes
+        back_iteration(weights, route)
+
 
         list_of_routes.append(route)
 
