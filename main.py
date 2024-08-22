@@ -145,9 +145,9 @@ def route_test(weights, available_char, cluster_coords):
             cpu_time = et - st
             print(f"CPU execution time: {cpu_time} seconds")
 
-            userCommand = input("Plot routes to screen [y/n]?: ")
-            if userCommand.upper() == "Y":
-                plot_routes(list_of_routes, cluster_coords)
+            user_command = int(input(f"How many routes to plot? ({len(list_of_routes)} available): "))
+            if user_command > 0:
+                plot_routes(list_of_routes, cluster_coords, user_command)
 
 
 if __name__ == '__main__':

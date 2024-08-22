@@ -16,25 +16,29 @@ def node_coord_plot(coords):
 
 def plot_clusters(clusters):
     fig, ax = plt.subplots()
-    for clust_name, coords in clusters.items():
+    colors = plt.cm.Spectral(np.linspace(0, 1, len(clusters)))
+    for idx, (clust_name, coords) in enumerate(clusters.items()):
         x_coords, y_coords = coords.transpose()
-        ax.scatter(x_coords, y_coords, label=clust_name)
-        ax.legend(loc='lower right', ncols=4)
+        ax.scatter(x_coords, y_coords, marker=f"${clust_name}$", label=clust_name, color=colors[idx])
+        ax.legend(loc='lower right', ncols=4, fontsize='x-small')
 
     plt.show()
 
 
-def plot_routes(list_of_routes, clusters):
+def plot_routes(list_of_routes, clusters, num_plots):
     with open('node_names.pkl', 'rb') as fp:
         node_names_dict = pickle.load(fp)
 
-    for nth, route in enumerate(list_of_routes):
+
+    c_sequence = list_of_routes[0].cluster_sequence
+    for nth, route in enumerate(list_of_routes[:num_plots]):
 
         fig, ax = plt.subplots()
-        for clust_name, coords in clusters.items():
+        colors = plt.cm.Spectral(np.linspace(0, 1, len(clusters)))
+        for idx, (clust_name, coords) in enumerate(clusters.items()):
             x_coords, y_coords = coords.transpose()
-            ax.scatter(x_coords, y_coords, label=clust_name)
-            ax.legend(loc='lower right', ncols=4)
+            ax.scatter(x_coords, y_coords, marker=f"${clust_name}$", label=clust_name, color=colors[idx])
+            ax.legend(loc='lower right', ncols=4, fontsize='x-small')
 
 
 
@@ -48,7 +52,7 @@ def plot_routes(list_of_routes, clusters):
 
             ax.plot(route_x_coords, route_y_coords)
             ax.set_title(f"Route {nth+1}")
-            ax.legend(loc='lower right', ncols=4)
+            #ax.legend(loc='lower right', ncols=4)
 
             # Just a bit hacky for incomplete list of names right now
             for clust_idx, clust_name in enumerate(route.cluster_sequence):
@@ -72,5 +76,8 @@ def plot_routes(list_of_routes, clusters):
                     x_coord = clusters[clust_name][route.path[clust_idx]][0]
                     y_coord = clusters[clust_name][route.path[clust_idx]][1]
                     ax.annotate(node_names[route.path[clust_idx]], (x_coord, y_coord))
+
+        plt.text(0.1, 0.9, f"Route: {c_sequence}", size=5,
+                 ha="center", va="center")
 
     plt.show()
